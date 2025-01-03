@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCUSPDF - Viewer</title>
+    <link rel="stylesheet" href="lib/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+</head>
+<body class="bg-gray-100 dark:bg-gray-800 min-h-screen transition-colors duration-300 overflow-hidden">
+    <div class="h-screen flex flex-col">
+        <header class="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-lg transition-all duration-300">
+            <div class="flex items-center gap-0">
+                <a href="#" onclick="location.reload(); return false;" rel="noopener noreferrer" 
+                   class="logo-link flex items-center">
+                    <img src="img/logo-1.png" alt="FOCUSPDF" class="logo-image h-10 transition-all duration-300">
+                </a>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 w-[200px]">
+                    <button id="zoomOut" class="control-btn tooltip" data-tooltip-key="zoomOut">
+                        <i class="fas fa-search-minus dark:text-white"></i>
+                    </button>
+                    <select id="zoomLevel" class="bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 text-gray-800 dark:text-white rounded-md px-2 py-1 h-[36px] flex-1">
+                        <option value="0.5">50%</option>
+                        <option value="0.75">75%</option>
+                        <option value="1">100%</option>
+                        <option value="1.25">125%</option>
+                        <option value="1.5">150%</option>
+                        <option value="2" selected>200%</option>
+                        <option value="2.5">250%</option>
+                        <option value="3">300%</option>
+                    </select>
+                    <button id="zoomIn" class="control-btn tooltip" data-tooltip-key="zoomIn">
+                        <i class="fas fa-search-plus dark:text-white"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
+                    <button id="toggleThumbnails" class="control-btn tooltip" data-tooltip-key="thumbnails">
+                        <i class="fas fa-eye dark:text-white"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 w-[220px]">
+                    <button id="fitToPage" class="control-btn tooltip" data-tooltip-key="fitToPage">
+                        <i class="fas fa-expand dark:text-white"></i>
+                    </button>
+                    <button id="fullScreen" class="control-btn tooltip" data-tooltip-key="fullScreen">
+                        <i class="fas fa-expand-arrows-alt dark:text-white"></i>
+                    </button>
+                    <button id="printBtn" class="control-btn tooltip opacity-60 hover:opacity-100 transition-opacity" data-tooltip-key="print">
+                        <i class="fas fa-print text-gray-600 dark:text-gray-400"></i>
+                    </button>
+                    <button id="scrollModeToggle" class="control-btn tooltip opacity-60 hover:opacity-100 transition-opacity" data-tooltip-key="scrollMode">
+                        <i class="fas fa-scroll text-gray-600 dark:text-gray-400"></i>
+                    </button>
+                    <button id="shortcuts-btn" class="control-btn tooltip" data-tooltip-key="shortcuts">
+                        <i class="fas fa-keyboard dark:text-white"></i>
+                    </button>
+                    <button id="darkModeToggle" class="control-btn tooltip" data-tooltip-key="theme">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block text-white"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 w-[140px]">
+                    <select id="languageSelect" class="bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 text-gray-800 dark:text-white rounded-md px-2 py-1 h-[36px] flex-1">
+                        <option value="en">English</option>
+                        <option value="tr">Türkçe</option>
+                        <option value="de">Deutsch</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="ru">Русский</option>
+                        <option value="ar">العربية</option>
+                        <option value="ko">한국어</option>
+                        <option value="zh">中文</option>
+                        <option value="it">Italiano</option>
+                        <option value="ja">日本語</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 w-[140px]">
+                    <input type="file" id="fileInput" accept=".pdf" class="hidden">
+                    <button id="openFile" class="bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-all duration-300 flex items-center gap-2 h-[36px] px-4 flex-1 justify-center">
+                        <i class="fas fa-file-pdf"></i>
+                        <span data-i18n="openPDF">Open</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div id="shortcuts-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white" data-i18n="shortcuts">Keyboard Shortcuts</h3>
+                    <button id="close-shortcuts" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <kbd>←/→</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.pageNav">Change Page</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <kbd>Ctrl + +/-</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.zoom">Zoom In/Out</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <kbd>Ctrl + 0</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.fit">Fit to Page</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <kbd>Alt + Wheel</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.pageScroll">Page Navigation</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <kbd>Ctrl + Wheel</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.zoomScroll">Zoom Control</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <kbd>Ctrl + P</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.print">Print Page</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <kbd>Alt + E</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.thumbnails">Toggle Thumbnails</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <kbd>Alt + T</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.theme">Toggle Theme</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <kbd>Alt + R/L</kbd>
+                        <span class="text-gray-600 dark:text-gray-300" data-i18n-key="shortcutsList.rotate">Rotate Page</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <main class="flex-1 relative overflow-hidden flex">
+            <div id="thumbnailSidebar" class="hidden bg-white dark:bg-gray-800 overflow-y-auto">
+                <div id="thumbnailContainer">
+                </div>
+            </div>
+
+            <div class="flex-1 relative">
+                <div id="pdfContainer" class="absolute inset-0 bg-white dark:bg-gray-800 transition-all duration-300 opacity-0 pointer-events-none">
+                    <div id="canvasWrapper" class="h-full overflow-auto relative">
+                        <div id="loadingOverlay" class="absolute inset-0 bg-white/80 dark:bg-gray-800/80 flex items-center justify-center hidden z-50">
+                            <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+                        </div>
+                        <canvas id="pdfCanvas" class="mx-auto border border-gray-200 dark:border-gray-700 rounded-md transition-shadow duration-300"></canvas>
+                    </div>
+                </div>
+
+                <div id="noDocumentOverlay" class="absolute inset-0 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                    <div class="text-center">
+                        <i class="fas fa-file-pdf text-6xl mb-4 text-gray-400 dark:text-gray-600"></i>
+                        <p data-i18n="noDocument">No document loaded</p>
+                        <p class="text-sm mt-2 text-gray-400 dark:text-gray-500" data-i18n="dropZoneHint">Drop PDF here or click to open</p>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-6 right-6 flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2 w-[140px] shadow-lg">
+                    <button id="prevPage" class="control-btn" disabled>
+                        <i class="fas fa-chevron-left dark:text-white"></i>
+                    </button>
+                    <div id="pageInfo" class="flex items-center text-gray-800 dark:text-white justify-center flex-1 gap-1">
+                        <input type="text" id="currentPage" 
+                               class="w-12 text-center bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 
+                                      text-gray-800 dark:text-white rounded-md px-1 py-0.5 text-sm focus:outline-none 
+                                      focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" 
+                               value="0">
+                        <span class="text-gray-600 dark:text-gray-400">/</span>
+                        <span id="totalPages" class="text-gray-600 dark:text-gray-400">0</span>
+                    </div>
+                    <button id="nextPage" class="control-btn" disabled>
+                        <i class="fas fa-chevron-right dark:text-white"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="lib/3.4.16.js"></script>
+    <script src="lib/pdf.min.js"></script>
+    <script src="lib/i18next.min.js"></script>
+    <script src="lib/i18nextBrowserLanguageDetector.min.js"></script>
+    <script src="languages.js"></script>
+    <script src="script.js"></script>
+    <script src="tailwind-config.js"></script>
+</body>
+</html> 
