@@ -1,3 +1,3 @@
 This repository contains FOCUSPDF.
 
-Smartboard Buddy is an @sneakersoln project.
+FOCUSPDF is an @sneakersoln project.
